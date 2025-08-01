@@ -27,6 +27,7 @@ def main():
         print("파일을 찾을 수 없습니다.")
     lines = f.readlines()
 
+    list_lazy = []
     init_data(lines)
     count_training(lines)
 
@@ -34,8 +35,12 @@ def main():
         person = get_person(name)
         person.set_point()
         person.show_info()
+        if person.is_lazy():
+            list_lazy.append(name)
 
-    show_removed_player()
+    print("\nRemoved player\n==============")
+    for name_person in list_lazy:
+        print(name_person)
     destroy_data()
 
 
@@ -55,16 +60,6 @@ def init_data(lines):
             continue
         list_people.append(Person(parts[0]))
         list_names.append(parts[0])
-
-
-def show_removed_player():
-    print("\nRemoved player\n==============")
-    for name_person in list_names:
-        person = get_person(name_person)
-        if person.cnt_training_wed != 0 or person.cnt_training_weekend != 0:
-            continue
-        if person.grade is GRADE_NORMAL:
-            print(name_person)
 
 
 if __name__ == "__main__":

@@ -61,6 +61,12 @@ class Person:
     def show_info(self):
         print(f"NAME : {self.name}, POINT : {self._point}, GRADE : {self._grade}")
 
+        
+    def is_lazy(self):
+        if self.cnt_training_wed != 0 or self.cnt_training_weekend != 0:
+            return False
+        return True if self.grade is GRADE_NORMAL else False
+
     @property
     def point(self):
         return self._point
