@@ -11,32 +11,14 @@ dict_people_to_id = {}
 cnt_people = 0
 
 # dat[사용자ID][요일]
-cnt_training = [[0] * 100 for _ in range(100)]
-points = [0] * 100
-grade = [""] * 100
+dict_cnt_training = {}
+dict_points = {}
+dict_grade = {}
 names = [""] * 100
-cnt_training_wed = [0] * 100
-cnt_training_weekend = [0] * 100
+dict_cnt_training_wed = {}
+dict_cnt_training_weekend = {}
 
-ID_MON = 0
-ID_TUE = 1
-ID_WED = 2
-ID_THU = 3
-ID_FRI = 4
-ID_SAT = 5
-ID_SUN = 6
-
-
-dict_index = {
-    "monday" : ID_MON,
-    "tuesday" : ID_TUE,
-    "wednesday" : ID_WED,
-    "thursday" : ID_THU,
-    "friday" : ID_FRI,
-    "saturday" : ID_SAT,
-    "sunday" : ID_SUN,
-}
-
+list_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 dict_add_point = {
     "monday" : 1,
     "tuesday" : 1,
@@ -55,26 +37,33 @@ def build_statistics(name_person, day):
         cnt_people += 1
         dict_people_to_id[name_person] = cnt_people
         names[cnt_people] = name_person
+        dict_cnt_training_wed[name_person] = 0
+        dict_cnt_training_weekend[name_person] = 0
+        dict_points[name_person] = 0
+        dict_cnt_training[name_person] = {}
+        for _day in list_days:
+            dict_cnt_training[name_person][_day] = 0
 
-    id_person = dict_people_to_id[name_person]
     if day == "wednesday":
-        cnt_training_wed[id_person] += 1
+        dict_cnt_training_wed[name_person] += 1
     elif day == "saturday" or day == "sunday":
-        cnt_training_weekend[id_person] += 1
+        dict_cnt_training_weekend[name_person] += 1
 
-    cnt_training[id_person][dict_index[day]] += 1
-    points[id_person] += dict_add_point[day]
+    dict_cnt_training[name_person][day] += 1
+    dict_points[name_person] += dict_add_point[day]
 
 def main():
+    f = None
     try:
-        with open("attendance_weekday_500.txt", encoding='utf-8') as f:
-            lines = f.readlines()
-            for line in lines:
-                parts = line.strip().split()
-                if len(parts) == 2:
-                    build_statistics(parts[0], parts[1])
+        f = open("attendance_weekday_500.txt", encoding='utf-8')
     except FileNotFoundError:
         print("파일을 찾을 수 없습니다.")
+
+    lines = f.readlines()
+    for line in lines:
+        parts = line.strip().split()
+        if len(parts) == 2:
+            build_statistics(parts[0], parts[1])
 
     for id_person in range(1, cnt_people + 1):
         set_bonus_point(id_person)
@@ -83,33 +72,38 @@ def main():
 
     show_removed_player()
 
+
 def show_removed_player():
     print("\nRemoved player\n==============")
-    for id_day in range(1, cnt_people + 1):
-        if cnt_training_wed[id_day] != 0 or cnt_training_weekend[id_day] != 0:
+    for id_person in range(1, cnt_people + 1):
+        name_person = names[id_person]
+        if dict_cnt_training_wed[name_person] != 0 or dict_cnt_training_weekend[name_person] != 0:
             continue
-        if grade[id_day] is GRADE_NORMAL:
-            print(names[id_day])
+        if dict_grade[name_person] is GRADE_NORMAL:
+            print(name_person)
 
 
 def show_info(id_person):
-    print(f"NAME : {names[id_person]}, POINT : {points[id_person]}, GRADE : {grade[id_person]}")
+    name_person = names[id_person]
+    print(f"NAME : {name_person}, POINT : {dict_points[name_person]}, GRADE : {dict_grade[name_person]}")
 
 
 def set_grade(id_person):
-    if points[id_person] >= THRE_POINT_GOLD:
-        grade[id_person] = GRADE_GOLD
-    elif points[id_person] >= THRE_POINT_SILVER:
-        grade[id_person] = GRADE_SILVER
+    name_person = names[id_person]
+    if dict_points[name_person] >= THRE_POINT_GOLD:
+        dict_grade[name_person] = GRADE_GOLD
+    elif dict_points[name_person] >= THRE_POINT_SILVER:
+        dict_grade[name_person] = GRADE_SILVER
     else:
-        grade[id_person] = GRADE_NORMAL
+        dict_grade[name_person] = GRADE_NORMAL
 
 
 def set_bonus_point(id_person):
-    if cnt_training[id_person][ID_WED] > THRE_COUNT_WED:
-        points[id_person] += BONUS_POINT_WED
-    if cnt_training[id_person][ID_SAT] + cnt_training[id_person][ID_SUN] > THRE_COUNT_WEEKEND:
-        points[id_person] += BONUS_POINT_WEEKEND
+    name_person = names[id_person]
+    if dict_cnt_training[name_person]["wednesday"] > THRE_COUNT_WED:
+        dict_points[name_person] += BONUS_POINT_WED
+    if dict_cnt_training[name_person]["saturday"] + dict_cnt_training[name_person]["sunday"] > THRE_COUNT_WEEKEND:
+        dict_points[name_person] += BONUS_POINT_WEEKEND
 
 
 if __name__ == "__main__":
