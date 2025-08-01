@@ -1,26 +1,24 @@
 from mission_2.person import Person
 
-BONUS_POINT_WEEKEND = 10
-BONUS_POINT_WED = 10
-THRE_COUNT_WEEKEND = 9
-THRE_COUNT_WED = 9
-THRE_POINT_SILVER = 30
-THRE_POINT_GOLD = 50
-GRADE_NORMAL = "NORMAL"
-GRADE_SILVER = "SILVER"
-GRADE_GOLD = "GOLD"
 
 # dat[사용자ID][요일]
-dict_points = {}
 dict_grade = {}
 list_names = []
 list_people = []
+GRADE_NORMAL = "NORMAL"
 
 
 def destroy_data():
     del list_names[:]
     del list_people[:]
 
+
+def get_person(name_person):
+    person = None
+    for person in list_people:
+        if name_person == person.name:
+            break
+    return person
 
 def main():
     f = None
@@ -33,31 +31,14 @@ def main():
     init_data(lines)
     count_training(lines)
 
-    set_point()
-
     for name in list_names:
-        set_bonus_point_per_person(name)
-        set_grade_per_person(name)
+        get_person(name).set_point()
         show_info_per_person(name)
 
     show_removed_player()
     destroy_data()
 
 
-def get_person(name_person):
-    person = None
-    for person in list_people:
-        if name_person == person.name:
-            break
-    return person
-
-def set_point():
-    for name in list_names:
-        if name == "":
-            continue
-        person = get_person(name)
-        for day in list_days:
-            dict_points[name] += dict_add_point[day] * person.dict_cnt_per_day[day]
 
 def count_training_per_line(name_person, day):
     get_person(name_person).update_count(day)
@@ -77,7 +58,6 @@ def init_data_in_line(name_person):
     list_people.append(Person(name_person))
 
     list_names.append(name_person)
-    dict_points[name_person] = 0
 
 def init_data(lines):
     for line in lines:
@@ -93,29 +73,13 @@ def show_removed_player():
         person = get_person(name_person)
         if person.cnt_training_wed != 0 or person.cnt_training_weekend != 0:
             continue
-        if dict_grade[name_person] is GRADE_NORMAL:
+        if person.grade is GRADE_NORMAL:
             print(name_person)
 
 
 def show_info_per_person(name_person):
-    print(f"NAME : {name_person}, POINT : {dict_points[name_person]}, GRADE : {dict_grade[name_person]}")
-
-
-def set_grade_per_person(name_person):
-    if dict_points[name_person] >= THRE_POINT_GOLD:
-        dict_grade[name_person] = GRADE_GOLD
-    elif dict_points[name_person] >= THRE_POINT_SILVER:
-        dict_grade[name_person] = GRADE_SILVER
-    else:
-        dict_grade[name_person] = GRADE_NORMAL
-
-
-def set_bonus_point_per_person(name_person):
     person = get_person(name_person)
-    if person.dict_cnt_per_day["wednesday"] > THRE_COUNT_WED:
-        dict_points[name_person] += BONUS_POINT_WED
-    if person.dict_cnt_per_day["saturday"] + person.dict_cnt_per_day["sunday"] > THRE_COUNT_WEEKEND:
-        dict_points[name_person] += BONUS_POINT_WEEKEND
+    print(f"NAME : {name_person}, POINT : {person.point}, GRADE : {person.grade}")
 
 
 if __name__ == "__main__":
