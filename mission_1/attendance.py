@@ -1,10 +1,19 @@
+BONUS_POINT_WEEKEND = 10
+BONUS_POINT_WED = 10
+THRE_COUNT_WEEKEND = 9
+THRE_COUNT_WED = 9
+THRE_POINT_SILVER = 30
+THRE_POINT_GOLD = 50
+GRADE_NORMAL = "NORMAL"
+GRADE_SILVER = "SILVER"
+GRADE_GOLD = "GOLD"
 dict_people = {}
 cnt_people = 0
 
 # dat[사용자ID][요일]
 cnt_training = [[0] * 100 for _ in range(100)]
 points = [0] * 100
-grade = [0] * 100
+grade = [""] * 100
 names = [''] * 100
 cnt_training_wed = [0] * 100
 cnt_training_weekend = [0] * 100
@@ -80,34 +89,30 @@ def show_removed_player():
     print("\nRemoved player")
     print("==============")
     for id_day in range(1, cnt_people + 1):
-        if grade[id_day] not in (1, 2) and cnt_training_wed[id_day] == 0 and cnt_training_weekend[id_day] == 0:
+        if cnt_training_wed[id_day] != 0 or cnt_training_weekend[id_day] != 0:
+            continue
+        if grade[id_day] is GRADE_NORMAL:
             print(names[id_day])
 
 
 def show_info(id_person):
-    print(f"NAME : {names[id_person]}, POINT : {points[id_person]}, GRADE : ", end="")
-    if grade[id_person] == 1:
-        print("GOLD")
-    elif grade[id_person] == 2:
-        print("SILVER")
-    else:
-        print("NORMAL")
+    print(f"NAME : {names[id_person]}, POINT : {points[id_person]}, GRADE : {grade[id_person]}")
 
 
 def set_grade(id_person):
-    if points[id_person] >= 50:
-        grade[id_person] = 1
-    elif points[id_person] >= 30:
-        grade[id_person] = 2
+    if points[id_person] >= THRE_POINT_GOLD:
+        grade[id_person] = GRADE_GOLD
+    elif points[id_person] >= THRE_POINT_SILVER:
+        grade[id_person] = GRADE_SILVER
     else:
-        grade[id_person] = 0
+        grade[id_person] = GRADE_NORMAL
 
 
 def set_point(id_person):
-    if cnt_training[id_person][ID_WED] > 9:
-        points[id_person] += 10
-    if cnt_training[id_person][ID_SAT] + cnt_training[id_person][ID_SUN] > 9:
-        points[id_person] += 10
+    if cnt_training[id_person][ID_WED] > THRE_COUNT_WED:
+        points[id_person] += BONUS_POINT_WED
+    if cnt_training[id_person][ID_SAT] + cnt_training[id_person][ID_SUN] > THRE_COUNT_WEEKEND:
+        points[id_person] += BONUS_POINT_WEEKEND
 
 
 if __name__ == "__main__":
