@@ -39,22 +39,22 @@ dict_add_point = {
 }
 
 
-def input2(w, wk):
+def input2(name_person, day):
     global cnt_people
 
-    if w not in dict_people:
+    if name_person not in dict_people:
         cnt_people += 1
-        dict_people[w] = cnt_people
-        names[cnt_people] = w
+        dict_people[name_person] = cnt_people
+        names[cnt_people] = name_person
 
-    id2 = dict_people[w]
-    if wk == "wednesday":
-        cnt_training_wed[id2] += 1
-    elif wk == "saturday" or wk == "sunday":
-        cnt_training_weekend[id2] += 1
+    id_person = dict_people[name_person]
+    if day == "wednesday":
+        cnt_training_wed[id_person] += 1
+    elif day == "saturday" or day == "sunday":
+        cnt_training_weekend[id_person] += 1
 
-    cnt_training[id2][dict_index[wk]] += 1
-    points[id2] += dict_add_point[wk]
+    cnt_training[id_person][dict_index[day]] += 1
+    points[id_person] += dict_add_point[day]
 
 def input_file():
     try:
