@@ -1,6 +1,7 @@
 import pytest
+from pytest_mock import MockerFixture
 
-from mission_2.attendance import init_data, list_people, count_training, destroy_data
+from mission_2.attendance import init_data, list_people, count_training, destroy_data, get_lines, main
 
 
 @pytest.mark.parametrize("entry1, entry2, entry3, cnt_mon, cnt_fri, cnt_wed, cnt_sat", [
@@ -87,3 +88,14 @@ def test_grade():
             break
     assert person.grade() == "GOLD"
     destroy_data()
+
+def test_get_file():
+    lines = get_lines("attendance_weekday_500.txt")
+    assert lines != []
+
+def test_no_file():
+    with pytest.raises(AttributeError):
+        get_lines("aaa.txt")
+
+def test_main(mocker: MockerFixture):
+    main()

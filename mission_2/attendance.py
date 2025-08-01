@@ -19,13 +19,18 @@ def get_person(name_person):
             break
     return person
 
-def main():
+
+def get_lines(name):
     f = None
     try:
-        f = open("attendance_weekday_500.txt", encoding='utf-8')
+        f = open(name, encoding='utf-8')
     except FileNotFoundError:
         print("파일을 찾을 수 없습니다.")
     lines = f.readlines()
+    return lines
+
+def main():
+    lines = get_lines("attendance_weekday_500.txt")
 
     list_lazy = []
     init_data(lines)
@@ -42,6 +47,7 @@ def main():
     for name_person in list_lazy:
         print(name_person)
     destroy_data()
+
 
 
 def count_training(lines):
