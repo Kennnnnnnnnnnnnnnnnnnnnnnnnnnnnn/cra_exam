@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 
-from mission_2.constants import list_days, GRADE_NORMAL, GRADE_SILVER, GRADE_GOLD
-
 
 # abstract strategy
 class Result(ABC):
     @abstractmethod
     def set_point(self):    pass
+    @abstractmethod
     def set_grade(self):    pass
+    @abstractmethod
     def is_lazy(self):    pass
 
 # concrete strategy
@@ -27,6 +27,10 @@ class ResultBaseball(Result):
     THRE_COUNT_WED = 9
     THRE_POINT_SILVER = 30
     THRE_POINT_GOLD = 50
+    GRADE_NORMAL = "NORMAL"
+    GRADE_SILVER = "SILVER"
+    GRADE_GOLD = "GOLD"
+    list_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
     def __init__(self, dict_cnt):
         self._point = 0
@@ -36,7 +40,7 @@ class ResultBaseball(Result):
         self.cnt_training_weekend = self.dict_cnt["saturday"] + self.dict_cnt["sunday"]
 
     def set_point(self):
-        for day in list_days:
+        for day in self.list_days:
             self._point += self.dict_add_point[day] * self.dict_cnt[day]
         if self.dict_cnt["wednesday"] > self.THRE_COUNT_WED:
             self._point += self.BONUS_POINT_WED
@@ -45,16 +49,16 @@ class ResultBaseball(Result):
 
     def set_grade(self):
         if self._point >= self.THRE_POINT_GOLD:
-            self._grade = GRADE_GOLD
+            self._grade = self.GRADE_GOLD
         elif self._point >= self.THRE_POINT_SILVER:
-            self._grade = GRADE_SILVER
+            self._grade = self.GRADE_SILVER
         else:
-            self._grade = GRADE_NORMAL
+            self._grade = self.GRADE_NORMAL
 
     def is_lazy(self):
         if self.cnt_training_wed != 0 or self.cnt_training_weekend != 0:
             return False
-        return True if self.grade is GRADE_NORMAL else False
+        return True if self.grade is self.GRADE_NORMAL else False
 
     @property
     def point(self):
