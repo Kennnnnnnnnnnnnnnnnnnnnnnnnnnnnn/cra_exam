@@ -9,6 +9,27 @@ names = [''] * 100
 wed = [0] * 100
 weeken = [0] * 100
 
+dict_index = {
+    "monday" : 0,
+    "tuesday" : 1,
+    "wednesday" : 2,
+    "thursday" : 3,
+    "friday" : 4,
+    "saturday" : 5,
+    "sunday" : 6,
+}
+
+dict_add_point = {
+    "monday" : 1,
+    "tuesday" : 1,
+    "wednesday" : 3,
+    "thursday" : 1,
+    "friday" : 1,
+    "saturday" : 2,
+    "sunday" : 2,
+}
+
+
 def input2(w, wk):
     global id_cnt
 
@@ -18,45 +39,19 @@ def input2(w, wk):
         names[id_cnt] = w
 
     id2 = id1[w]
-
-    add_point = 0
-    index = 0
-
-    if wk == "monday":
-        index = 0
-        add_point += 1
-    elif wk == "tuesday":
-        index = 1
-        add_point += 1
-    elif wk == "wednesday":
-        index = 2
-        add_point += 3
+    if wk == "wednesday":
         wed[id2] += 1
-    elif wk == "thursday":
-        index = 3
-        add_point += 1
-    elif wk == "friday":
-        index = 4
-        add_point += 1
-    elif wk == "saturday":
-        index = 5
-        add_point += 2
-        weeken[id2] += 1
-    elif wk == "sunday":
-        index = 6
-        add_point += 2
+    elif wk == "saturday" or wk == "sunday":
         weeken[id2] += 1
 
-    dat[id2][index] += 1
-    points[id2] += add_point
+    dat[id2][dict_index[wk]] += 1
+    points[id2] += dict_add_point[wk]
 
 def input_file():
     try:
         with open("attendance_weekday_500.txt", encoding='utf-8') as f:
-            for _ in range(500):
-                line = f.readline()
-                if not line:
-                    break
+            lines = f.readlines()
+            for line in lines:
                 parts = line.strip().split()
                 if len(parts) == 2:
                     input2(parts[0], parts[1])
