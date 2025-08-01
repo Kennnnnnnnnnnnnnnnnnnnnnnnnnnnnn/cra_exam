@@ -35,7 +35,7 @@ def test_point_simple(entry1, entry2, entry3, point):
         if person.name == 'Ethan':
             person.set_point()
             break
-    assert person.point == point
+    assert person.point() == point
     destroy_data()
 
 
@@ -85,5 +85,5 @@ def test_grade():
         if person.name == 'Charlie':
             person.set_point()
             break
-    assert person.grade == "GOLD"
+    assert person.grade() == "GOLD"
     destroy_data()
