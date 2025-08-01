@@ -1,4 +1,4 @@
-from mission_2.constants import list_days
+from mission_2.constants import list_days, GRADE_NORMAL, GRADE_SILVER, GRADE_GOLD
 
 dict_add_point = {
     "monday" : 1,
@@ -15,9 +15,7 @@ THRE_COUNT_WEEKEND = 9
 THRE_COUNT_WED = 9
 THRE_POINT_SILVER = 30
 THRE_POINT_GOLD = 50
-GRADE_NORMAL = "NORMAL"
-GRADE_SILVER = "SILVER"
-GRADE_GOLD = "GOLD"
+
 
 class Person:
     def __init__(self, name):
@@ -59,6 +57,9 @@ class Person:
             self._grade = GRADE_SILVER
         else:
             self._grade = GRADE_NORMAL
+
+    def show_info(self):
+        print(f"NAME : {self.name}, POINT : {self._point}, GRADE : {self._grade}")
 
     @property
     def point(self):
