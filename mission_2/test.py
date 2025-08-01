@@ -20,3 +20,18 @@ def test_count_simple(entry1, entry2, entry3, cnt_mon, cnt_fri, cnt_wed, cnt_sat
     assert person.dict_cnt_per_day["wednesday"] == cnt_wed
     assert person.dict_cnt_per_day["saturday"] == cnt_sat
     destroy_data()
+
+@pytest.mark.parametrize("entry1, entry2, entry3, point", [
+    ('Ethan friday','Ethan monday', 'Ethan monday', 3),
+    ('Ethan wednesday','Ethan saturday', 'Ethan monday', 6),
+])
+def test_point_simple(entry1, entry2, entry3, point):
+    lines = [entry1, entry2, entry3]
+    init_data(lines)
+    count_training(lines)
+    person = None
+    for person in list_people:
+        if person.name == 'Ethan':
+            break
+    assert person.point == point
+    destroy_data()

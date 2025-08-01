@@ -14,18 +14,6 @@ GRADE_GOLD = "GOLD"
 dict_points = {}
 dict_grade = {}
 list_names = []
-
-list_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-dict_add_point = {
-    "monday" : 1,
-    "tuesday" : 1,
-    "wednesday" : 3,
-    "thursday" : 1,
-    "friday" : 1,
-    "saturday" : 2,
-    "sunday" : 2,
-}
-
 list_people = []
 
 
