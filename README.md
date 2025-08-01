@@ -5,7 +5,7 @@
 | D2 | O  |
 | D3 | O  |
 | D4 | O  |
-| D5 | X  |
+| D5 | O  |
 
 # Coverage
 ![img_1.png](img_1.png)
