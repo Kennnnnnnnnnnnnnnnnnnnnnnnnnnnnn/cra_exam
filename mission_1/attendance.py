@@ -7,14 +7,14 @@ THRE_POINT_GOLD = 50
 GRADE_NORMAL = "NORMAL"
 GRADE_SILVER = "SILVER"
 GRADE_GOLD = "GOLD"
-dict_people = {}
+dict_people_to_id = {}
 cnt_people = 0
 
 # dat[사용자ID][요일]
 cnt_training = [[0] * 100 for _ in range(100)]
 points = [0] * 100
 grade = [""] * 100
-names = [''] * 100
+names = [""] * 100
 cnt_training_wed = [0] * 100
 cnt_training_weekend = [0] * 100
 
@@ -48,15 +48,15 @@ dict_add_point = {
 }
 
 
-def input2(name_person, day):
+def build_statistics(name_person, day):
     global cnt_people
 
-    if name_person not in dict_people:
+    if name_person not in dict_people_to_id:
         cnt_people += 1
-        dict_people[name_person] = cnt_people
+        dict_people_to_id[name_person] = cnt_people
         names[cnt_people] = name_person
 
-    id_person = dict_people[name_person]
+    id_person = dict_people_to_id[name_person]
     if day == "wednesday":
         cnt_training_wed[id_person] += 1
     elif day == "saturday" or day == "sunday":
@@ -65,29 +65,26 @@ def input2(name_person, day):
     cnt_training[id_person][dict_index[day]] += 1
     points[id_person] += dict_add_point[day]
 
-def input_file():
+def main():
     try:
         with open("attendance_weekday_500.txt", encoding='utf-8') as f:
             lines = f.readlines()
             for line in lines:
                 parts = line.strip().split()
                 if len(parts) == 2:
-                    input2(parts[0], parts[1])
-
-        for id_person in range(1, cnt_people + 1):
-            set_point(id_person)
-            set_grade(id_person)
-            show_info(id_person)
-
-        show_removed_player()
-
+                    build_statistics(parts[0], parts[1])
     except FileNotFoundError:
         print("파일을 찾을 수 없습니다.")
 
+    for id_person in range(1, cnt_people + 1):
+        set_bonus_point(id_person)
+        set_grade(id_person)
+        show_info(id_person)
+
+    show_removed_player()
 
 def show_removed_player():
-    print("\nRemoved player")
-    print("==============")
+    print("\nRemoved player\n==============")
     for id_day in range(1, cnt_people + 1):
         if cnt_training_wed[id_day] != 0 or cnt_training_weekend[id_day] != 0:
             continue
@@ -108,7 +105,7 @@ def set_grade(id_person):
         grade[id_person] = GRADE_NORMAL
 
 
-def set_point(id_person):
+def set_bonus_point(id_person):
     if cnt_training[id_person][ID_WED] > THRE_COUNT_WED:
         points[id_person] += BONUS_POINT_WED
     if cnt_training[id_person][ID_SAT] + cnt_training[id_person][ID_SUN] > THRE_COUNT_WEEKEND:
@@ -116,4 +113,4 @@ def set_point(id_person):
 
 
 if __name__ == "__main__":
-    input_file()
+    main()
