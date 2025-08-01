@@ -1,3 +1,5 @@
+from mission_2.person import Person
+
 BONUS_POINT_WEEKEND = 10
 BONUS_POINT_WED = 10
 THRE_COUNT_WEEKEND = 9
@@ -7,8 +9,6 @@ THRE_POINT_GOLD = 50
 GRADE_NORMAL = "NORMAL"
 GRADE_SILVER = "SILVER"
 GRADE_GOLD = "GOLD"
-dict_people_to_id = {}
-cnt_people = 0
 
 # dat[사용자ID][요일]
 dict_cnt_training = {}
@@ -28,6 +28,13 @@ dict_add_point = {
     "saturday" : 2,
     "sunday" : 2,
 }
+
+list_people = []
+
+
+def destroy_data():
+    del list_names[:]
+    del list_people[:]
 
 
 def main():
@@ -49,6 +56,7 @@ def main():
         show_info_per_person(name)
 
     show_removed_player()
+    destroy_data()
 
 
 def set_point():
@@ -58,39 +66,48 @@ def set_point():
         for day in list_days:
             dict_points[name] += dict_add_point[day] * dict_cnt_training[name][day]
 
+
 def count_training_per_line(name_person, day):
+    for person in list_people:
+        if name_person == person.name:
+            person.update_count(day)
+            break
+
+    # method version
     if day == "wednesday":
         dict_cnt_training_wed[name_person] += 1
     elif day == "saturday" or day == "sunday":
         dict_cnt_training_weekend[name_person] += 1
-
     dict_cnt_training[name_person][day] += 1
 
 def count_training(lines):
     for line in lines:
         parts = line.strip().split()
-        if len(parts) == 2:
-            count_training_per_line(parts[0], parts[1])
+        if len(parts) != 2:
+            continue
+        count_training_per_line(parts[0], parts[1])
 
-def init_data_in_line(name_person, day):
-    global cnt_people
 
-    if name_person not in dict_people_to_id:
-        cnt_people += 1
-        dict_people_to_id[name_person] = cnt_people
-        list_names.append(name_person)
-        dict_cnt_training_wed[name_person] = 0
-        dict_cnt_training_weekend[name_person] = 0
-        dict_points[name_person] = 0
-        dict_cnt_training[name_person] = {}
-        for _day in list_days:
-            dict_cnt_training[name_person][_day] = 0
+def init_data_in_line(name_person):
+    if name_person in list_names:
+        return
+
+    list_people.append(Person(name_person))
+
+    list_names.append(name_person)
+    dict_cnt_training_wed[name_person] = 0
+    dict_cnt_training_weekend[name_person] = 0
+    dict_points[name_person] = 0
+    dict_cnt_training[name_person] = {}
+    for day in list_days:
+        dict_cnt_training[name_person][day] = 0
 
 def init_data(lines):
     for line in lines:
         parts = line.strip().split()
-        if len(parts) == 2:
-            init_data_in_line(parts[0], parts[1])
+        if len(parts) != 2:
+            continue
+        init_data_in_line(parts[0])
 
 
 def show_removed_player():
