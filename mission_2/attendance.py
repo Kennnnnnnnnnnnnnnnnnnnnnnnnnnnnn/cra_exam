@@ -11,12 +11,9 @@ GRADE_SILVER = "SILVER"
 GRADE_GOLD = "GOLD"
 
 # dat[사용자ID][요일]
-dict_cnt_training = {}
 dict_points = {}
 dict_grade = {}
 list_names = []
-dict_cnt_training_wed = {}
-dict_cnt_training_weekend = {}
 
 list_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 dict_add_point = {
@@ -59,26 +56,23 @@ def main():
     destroy_data()
 
 
+def get_person(name_person):
+    person = None
+    for person in list_people:
+        if name_person == person.name:
+            break
+    return person
+
 def set_point():
     for name in list_names:
         if name == "":
             continue
+        person = get_person(name)
         for day in list_days:
-            dict_points[name] += dict_add_point[day] * dict_cnt_training[name][day]
-
+            dict_points[name] += dict_add_point[day] * person.dict_cnt_per_day[day]
 
 def count_training_per_line(name_person, day):
-    for person in list_people:
-        if name_person == person.name:
-            person.update_count(day)
-            break
-
-    # method version
-    if day == "wednesday":
-        dict_cnt_training_wed[name_person] += 1
-    elif day == "saturday" or day == "sunday":
-        dict_cnt_training_weekend[name_person] += 1
-    dict_cnt_training[name_person][day] += 1
+    get_person(name_person).update_count(day)
 
 def count_training(lines):
     for line in lines:
@@ -95,12 +89,7 @@ def init_data_in_line(name_person):
     list_people.append(Person(name_person))
 
     list_names.append(name_person)
-    dict_cnt_training_wed[name_person] = 0
-    dict_cnt_training_weekend[name_person] = 0
     dict_points[name_person] = 0
-    dict_cnt_training[name_person] = {}
-    for day in list_days:
-        dict_cnt_training[name_person][day] = 0
 
 def init_data(lines):
     for line in lines:
@@ -113,7 +102,8 @@ def init_data(lines):
 def show_removed_player():
     print("\nRemoved player\n==============")
     for name_person in list_names:
-        if dict_cnt_training_wed[name_person] != 0 or dict_cnt_training_weekend[name_person] != 0:
+        person = get_person(name_person)
+        if person.cnt_training_wed != 0 or person.cnt_training_weekend != 0:
             continue
         if dict_grade[name_person] is GRADE_NORMAL:
             print(name_person)
@@ -133,9 +123,10 @@ def set_grade_per_person(name_person):
 
 
 def set_bonus_point_per_person(name_person):
-    if dict_cnt_training[name_person]["wednesday"] > THRE_COUNT_WED:
+    person = get_person(name_person)
+    if person.dict_cnt_per_day["wednesday"] > THRE_COUNT_WED:
         dict_points[name_person] += BONUS_POINT_WED
-    if dict_cnt_training[name_person]["saturday"] + dict_cnt_training[name_person]["sunday"] > THRE_COUNT_WEEKEND:
+    if person.dict_cnt_per_day["saturday"] + person.dict_cnt_per_day["sunday"] > THRE_COUNT_WEEKEND:
         dict_points[name_person] += BONUS_POINT_WEEKEND
 
 
